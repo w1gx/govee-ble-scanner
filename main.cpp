@@ -14,7 +14,6 @@
 #include <sys/ioctl.h>
 #include <locale>
 #include <iomanip>
-
 #include <sstream>
 #include <sys/types.h>
 #include <unistd.h>
@@ -22,6 +21,10 @@
 #include "bleScan.h"
 #include "blePacket.h"
 
+#define DEBUGLEVEL 1
+#define SHOWALL		 0
+
+//! Scanning flag
 volatile bool isScanning = true;
 
 //!  Operator for bdaddr_t maps
@@ -86,9 +89,9 @@ int main(void)
 				std::string data;
 
 				// print packet info if it's in the list of Govee devices
-				if (goveeMap.find(bp.bdaddr) != goveeMap.end())
+				if (goveeMap.find(bp.bdaddr) != goveeMap.end() || SHOWALL)
 				{
-					bp.printInfo(1);
+					bp.printInfo(DEBUGLEVEL);
 				}
 
 				// see if we have manufacturer data
@@ -101,6 +104,7 @@ int main(void)
 						// add to govee map if it doesn't exist yet;
 						if (goveeMap.find(bp.bdaddr) == goveeMap.end())
 						{
+							bp.printInfo(DEBUGLEVEL);
 							goveeMap.insert(std::make_pair(bp.bdaddr,1));
 						}
 						// print data
@@ -110,12 +114,13 @@ int main(void)
 						float temp = (float(dtemp)/100*9/5)+32;
 						std::cout.setf(std::ios::fixed);
 						std::cout << std::setprecision(2);
-						std::cout << "GOVEE " << ANSI_COLOR_RED << bp.addr << ANSI_COLOR_RESET << ",temp=" << float(dtemp)/100 << "(" << temp <<"F), hum="<< float(dhum)/100;
-						std::cout << ", bat=" << dbat << ",RSSI= "<< int((signed char)bp.rssi) << "dBm" << std::endl;
+						std::cout << ANSI_BOLD << ANSI_COLOR_BLUE << "GOVEE " << ANSI_COLOR_RED << bp.addr << ANSI_COLOR_RESET;
+						std::cout << " - Temp=" << float(dtemp)/100 << "(" << temp <<"F), Hum="<< float(dhum)/100;
+						std::cout << "%, Bat=" << dbat << "%, RSSI= "<< int((signed char)bp.rssi) << "dBm" << std::endl;
 					} // 088EC
 				} // manufacturer info
 
-				usleep(1000);
+				usleep(100);
 			} // scan
 		} // while
 		gble.disconnect();

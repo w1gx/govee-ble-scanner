@@ -5,6 +5,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 
+#define ANSI_BOLD          "\x1b[1m"  /**< Console color definiton */
 #define ANSI_COLOR_RED     "\x1b[31m" /**< Console color definiton */
 #define ANSI_COLOR_GREEN   "\x1b[32m" /**< Console color definiton */
 #define ANSI_COLOR_YELLOW  "\x1b[33m" /**< Console color definiton */
