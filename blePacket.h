@@ -27,6 +27,7 @@ public:
     char  data[50];
   } t_info;
 
+  bdaddr_t bdaddr;
   char addr[20] = { 0 };  //!< address
   unsigned char buf[HCI_MAX_EVENT_SIZE];  //!< packet buffer
   ssize_t packetLength; //!< packet length

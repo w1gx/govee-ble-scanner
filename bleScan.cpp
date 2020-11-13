@@ -116,6 +116,7 @@ bool BLEScan::scan(BLEPacket *packet)
       const le_advertising_info * const info = (le_advertising_info *)(metaEvent->data + 1);
       packet->addr[19] = { 0 };
       ba2str(&info->bdaddr, packet->addr);
+      packet->bdaddr = info->bdaddr;
       packet->event_type=info->evt_type;
       packet->event_length=info->length;
       packet->subevent = metaEvent->subevent;
