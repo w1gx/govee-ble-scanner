@@ -5,6 +5,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 
+#define ANSI_BOLD          "\x1b[1m"  /**< Console color definiton */
 #define ANSI_COLOR_RED     "\x1b[31m" /**< Console color definiton */
 #define ANSI_COLOR_GREEN   "\x1b[32m" /**< Console color definiton */
 #define ANSI_COLOR_YELLOW  "\x1b[33m" /**< Console color definiton */
@@ -27,6 +28,7 @@ public:
     char  data[50];
   } t_info;
 
+  bdaddr_t bdaddr;
   char addr[20] = { 0 };  //!< address
   unsigned char buf[HCI_MAX_EVENT_SIZE];  //!< packet buffer
   ssize_t packetLength; //!< packet length

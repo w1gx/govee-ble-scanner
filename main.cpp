@@ -14,7 +14,6 @@
 #include <sys/ioctl.h>
 #include <locale>
 #include <iomanip>
-
 #include <sstream>
 #include <sys/types.h>
 #include <unistd.h>
@@ -22,8 +21,29 @@
 #include "bleScan.h"
 #include "blePacket.h"
 
+#define DEBUGLEVEL 1
+#define SHOWALL		 0
+
+//! Scanning flag
 volatile bool isScanning = true;
 
+//!  Operator for bdaddr_t maps
+bool operator <(const bdaddr_t &a, const bdaddr_t &b)
+{
+	unsigned long long A = a.b[5];
+	A = A << 8 | a.b[4];
+	A = A << 8 | a.b[3];
+	A = A << 8 | a.b[2];
+	A = A << 8 | a.b[1];
+	A = A << 8 | a.b[0];
+	unsigned long long B = b.b[5];
+	B = B << 8 | b.b[4];
+	B = B << 8 | b.b[3];
+	B = B << 8 | b.b[2];
+	B = B << 8 | b.b[1];
+	B = B << 8 | b.b[0];
+	return(A < B);
+}
 
 //! Signal handler for SIGINT
 void SignalHandlerSIGINT(int signal)
@@ -49,11 +69,16 @@ int main(void)
 	typedef void(*SignalHandlerPointer)(int);
 	SignalHandlerPointer previousHandlerSIGINT = signal(SIGINT, SignalHandlerSIGINT);
 	SignalHandlerPointer previousHandlerSIGHUP = signal(SIGHUP, SignalHandlerSIGHUP);
-	isScanning = true;
+
+	// Data
+	BLEScan gble;												//!< BLEScan object
+	std::map<bdaddr_t,int> goveeMap;		//!< Map for known Govee devices
+	isScanning = true;									//!< Scanning flag
+
+
 
 	std::cout << "------ STARTED ----- " << std::endl;
 
-	BLEScan gble;
 	if (gble.connect())
 	{
 		while (isScanning)
@@ -63,6 +88,12 @@ int main(void)
 			{
 				std::string data;
 
+				// print packet info if it's in the list of Govee devices
+				if (goveeMap.find(bp.bdaddr) != goveeMap.end() || SHOWALL)
+				{
+					bp.printInfo(DEBUGLEVEL);
+				}
+
 				// see if we have manufacturer data
 				std::map<int,BLEPacket::t_info>::iterator it = bp.infoBlocks.find(0xff);
 				if (it!=bp.infoBlocks.end())
@@ -70,18 +101,26 @@ int main(void)
 					// do we have a packet starting with 0x88EC? If so, we likely have a Govee sensor
 					if (it->second.data[0]==0x88 && it->second.data[1]==0xEC)
 					{
-						bp.printInfo(3);
+						// add to govee map if it doesn't exist yet;
+						if (goveeMap.find(bp.bdaddr) == goveeMap.end())
+						{
+							bp.printInfo(DEBUGLEVEL);
+							goveeMap.insert(std::make_pair(bp.bdaddr,1));
+						}
+						// print data
 						int dtemp = ((signed char)(it->second.data[4]) << 8) | int(it->second.data[3]);
 						int dhum = int(it->second.data[6]) << 8 | int(it->second.data[5]);
 						int dbat = int(it->second.data[7]);
 						float temp = (float(dtemp)/100*9/5)+32;
 						std::cout.setf(std::ios::fixed);
 						std::cout << std::setprecision(2);
-						std::cout << "GOVEE: " << bp.addr << ",temp=" << float(dtemp)/100 << "(" << temp <<"F), hum="<< float(dhum)/100;
-						std::cout << ", bat=" << dbat << ",RSSI= "<< int((signed char)bp.rssi) << "dBm" << std::endl;
+						std::cout << ANSI_BOLD << ANSI_COLOR_BLUE << "GOVEE " << ANSI_COLOR_RED << bp.addr << ANSI_COLOR_RESET;
+						std::cout << " - Temp=" << float(dtemp)/100 << "(" << temp <<"F), Hum="<< float(dhum)/100;
+						std::cout << "%, Bat=" << dbat << "%, RSSI= "<< int((signed char)bp.rssi) << "dBm" << std::endl;
 					} // 088EC
-				} // sc>0
-				usleep(1000);
+				} // manufacturer info
+
+				usleep(100);
 			} // scan
 		} // while
 		gble.disconnect();
