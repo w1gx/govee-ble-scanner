@@ -26,7 +26,7 @@ public:
     char	length;
     char	type;
     char  data[50];
-  } t_info;
+  } t_adStructure;
 
   bdaddr_t bdaddr;
   char addr[20] = { 0 };  //!< address
@@ -38,8 +38,8 @@ public:
   char event_length;    //!< event length (for all contained info packets)
   char rssi;            //!< RSSI in dBM
 
-  t_info infoPacket;    //!< info packet
-  std::map<int,t_info> infoBlocks;    //!< map for all info blocks of packet
+  t_adStructure adStructure_data;             //!< AD structure packet
+  std::map<int,t_adStructure> adStructures;   //!< map for all AD structures of packet
 
   void printInfo(int debugLevel);  //!< display packet info with debug level of 0-2
 

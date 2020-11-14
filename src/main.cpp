@@ -95,8 +95,8 @@ int main(void)
 				}
 
 				// see if we have manufacturer data
-				std::map<int,BLEPacket::t_info>::iterator it = bp.infoBlocks.find(0xff);
-				if (it!=bp.infoBlocks.end())
+				std::map<int,BLEPacket::t_adStructure>::iterator it = bp.adStructures.find(0xff);
+				if (it!=bp.adStructures.end())
 				{
 					// do we have a packet starting with 0x88EC? If so, we likely have a Govee sensor
 					if (it->second.data[0]==0x88 && it->second.data[1]==0xEC)

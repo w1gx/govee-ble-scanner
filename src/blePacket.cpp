@@ -120,8 +120,8 @@ void BLEPacket::printInfo(int debugLevel)
 
 
       // cycle through blocks
-      std::map<int,t_info>::iterator it = infoBlocks.begin();
-      while (it!=infoBlocks.end())
+      std::map<int,t_adStructure>::iterator it = adStructures.begin();
+      while (it!=adStructures.end())
       {
         int infotype = it->first;
         co <<  std::dec << std::setw(2) << std::setfill(' ') << int(it->second.length) <<" octets: " << std::hex << std::setw(2) << std::setfill('0') << infotype << " - ";
