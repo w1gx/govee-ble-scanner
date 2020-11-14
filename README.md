@@ -2,7 +2,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/w1gx/govee-ble-scanner?style=for-the-badge) ![Top language](https://img.shields.io/github/languages/top/w1gx/govee-ble-scanner?style=for-the-badge) ![Language count](https://img.shields.io/github/languages/count/w1gx/govee-ble-scanner?style=for-the-badge) ![Issues](https://img.shields.io/github/issues/w1gx/govee-ble-scanner?style=for-the-badge) ![GitHub release](https://img.shields.io/github/v/release/w1gx/govee-ble-scanner?style=for-the-badge)
 >A BLE scanner for Govee H5074 temperature sensors.
 
-![img](./img/terminal-output)
+![terminalscreen](./img/terminal-output.png)
 
 
 ## General info
