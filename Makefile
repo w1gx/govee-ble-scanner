@@ -6,7 +6,7 @@ OBJ_DIR  := $(BUILD)
 APP_DIR  := $(BUILD)
 RELEASE_DIR  := $(BUILD)/release
 TARGET   := goveeBLE
-INCLUDE  := -I.
+INCLUDE  := -I. -I./src
 SRC      :=                      \
    $(wildcard *.cpp) \
    $(wildcard src/*.cpp)         \
